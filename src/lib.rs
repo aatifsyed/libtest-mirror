@@ -14,15 +14,15 @@
 // running tests while providing a base that other test frameworks may
 // build off of.
 
-#![unstable(feature = "test", issue = "50297")]
+// #![unstable(feature = "test", issue = "50297")]
 #![doc(test(attr(deny(warnings))))]
-#![doc(rust_logo)]
-#![feature(rustdoc_internals)]
-#![feature(internal_output_capture)]
-#![feature(staged_api)]
-#![feature(process_exitcode_internals)]
-#![feature(panic_can_unwind)]
-#![feature(test)]
+// #![doc(rust_logo)]
+// #![feature(rustdoc_internals)]
+// #![feature(internal_output_capture)]
+// #![feature(staged_api)]
+// #![feature(process_exitcode_internals)]
+// #![feature(panic_can_unwind)]
+// #![feature(test)]
 #![allow(internal_features)]
 #![warn(rustdoc::unescaped_backticks)]
 
@@ -47,14 +47,16 @@ pub mod test {
         DynTestFn, DynTestName, StaticBenchFn, StaticTestFn, StaticTestName, TestDesc,
         TestDescAndFn, TestId, TestName, TestType,
     };
-    pub use crate::{assert_test_result, filter_tests, run_test, test_main, test_main_static};
+    pub use crate::{
+        /*assert_test_result, */ filter_tests, run_test, test_main, test_main_static,
+    };
 }
 
 use std::collections::VecDeque;
-use std::io::prelude::Write;
-use std::mem::ManuallyDrop;
+// use std::io::prelude::Write;
+// use std::mem::ManuallyDrop;
 use std::panic::{self, catch_unwind, AssertUnwindSafe, PanicHookInfo};
-use std::process::{self, Command, Termination};
+use std::process::{self, Command /*, Termination*/};
 use std::sync::mpsc::{channel, Sender};
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
@@ -119,16 +121,16 @@ pub fn test_main(args: &[String], tests: Vec<TestDescAndFn>, options: Option<Opt
             let builtin_panic_hook = panic::take_hook();
             let hook = Box::new({
                 move |info: &'_ PanicHookInfo<'_>| {
-                    if !info.can_unwind() {
-                        std::mem::forget(std::io::stderr().lock());
-                        let mut stdout = ManuallyDrop::new(std::io::stdout().lock());
-                        if let Some(captured) = io::set_output_capture(None) {
-                            if let Ok(data) = captured.lock() {
-                                let _ = stdout.write_all(&data);
-                                let _ = stdout.flush();
-                            }
-                        }
-                    }
+                    // if !info.can_unwind() {
+                    //     std::mem::forget(std::io::stderr().lock());
+                    //     let mut stdout = ManuallyDrop::new(std::io::stdout().lock());
+                    //     if let Some(captured) = io::set_output_capture(None) {
+                    //         if let Ok(data) = captured.lock() {
+                    //             let _ = stdout.write_all(&data);
+                    //             let _ = stdout.flush();
+                    //         }
+                    //     }
+                    // }
                     builtin_panic_hook(info);
                 }
             });
@@ -216,20 +218,20 @@ fn make_owned_test(test: &&TestDescAndFn) -> TestDescAndFn {
     }
 }
 
-/// Invoked when unit tests terminate. Returns `Result::Err` if the test is
-/// considered a failure. By default, invokes `report()` and checks for a `0`
-/// result.
-pub fn assert_test_result<T: Termination>(result: T) -> Result<(), String> {
-    let code = result.report().to_i32();
-    if code == 0 {
-        Ok(())
-    } else {
-        Err(format!(
-            "the test returned a termination value with a non-zero status code \
-             ({code}) which indicates a failure"
-        ))
-    }
-}
+// /// Invoked when unit tests terminate. Returns `Result::Err` if the test is
+// /// considered a failure. By default, invokes `report()` and checks for a `0`
+// /// result.
+// pub fn assert_test_result<T: Termination>(result: T) -> Result<(), String> {
+//     let code = result.report().to_i32();
+//     if code == 0 {
+//         Ok(())
+//     } else {
+//         Err(format!(
+//             "the test returned a termination value with a non-zero status code \
+//              ({code}) which indicates a failure"
+//         ))
+//     }
+// }
 
 struct FilteredTests {
     tests: Vec<(TestId, TestDescAndFn)>,
@@ -640,7 +642,7 @@ fn run_test_in_process(
     let data = Arc::new(Mutex::new(Vec::new()));
 
     if !nocapture {
-        io::set_output_capture(Some(data.clone()));
+        // io::set_output_capture(Some(data.clone()));
     }
 
     let start = report_time.then(Instant::now);
@@ -650,7 +652,7 @@ fn run_test_in_process(
         TestExecTime(duration)
     });
 
-    io::set_output_capture(None);
+    // io::set_output_capture(None);
 
     let test_result = match result {
         Ok(()) => calc_result(&desc, Ok(()), &time_opts, &exec_time),

@@ -3,7 +3,7 @@
 use std::panic::{catch_unwind, AssertUnwindSafe};
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
-use std::{cmp, io};
+use std::{cmp /*, io*/};
 
 use super::event::CompletedTest;
 use super::options::BenchMode;
@@ -203,12 +203,12 @@ pub fn benchmark<F>(
     let data = Arc::new(Mutex::new(Vec::new()));
 
     if !nocapture {
-        io::set_output_capture(Some(data.clone()));
+        // io::set_output_capture(Some(data.clone()));
     }
 
     let result = catch_unwind(AssertUnwindSafe(|| bs.bench(f)));
 
-    io::set_output_capture(None);
+    // io::set_output_capture(None);
 
     let test_result = match result {
         //bs.bench(f) {
