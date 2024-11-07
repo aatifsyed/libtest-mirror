@@ -1,12 +1,12 @@
 [package]
-name = "libtest"
+name = "libtest-mirror"
 version = "0.1.0+1.82.0"
 edition = "2021"
 description = "a copy-paste of rust's built-in test runner"
 license = "MIT OR Apache-2.0"
-homepage = "https://crates.io/crates/libtest"
-repository = "https://github.com/aatifsyed/libtest"
-documentation = "https://docs.rs/libtest"
+homepage = "https://crates.io/crates/libtest-mirror"
+repository = "https://github.com/aatifsyed/libtest-mirror"
+documentation = "https://docs.rs/libtest-mirror"
 
 [dependencies]
 getopts = "0.2.21"
